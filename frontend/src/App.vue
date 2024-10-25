@@ -5,20 +5,42 @@ import CommentSection from './components/CommentSection.vue';
 const userId = ref('');
 const users = ref(null);
 const newEmail = ref('');
+const errorMessage = ref('');
 
 const getUser = async () => {
-  const response = await fetch(`http://localhost:3000/api/user/${userId.value}`);
-  users.value = await response.json();
+  try {
+    const response = await fetch(`http://localhost:3000/api/user/${userId.value}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText);
+    }
+    users.value = await response.json();
+    errorMessage.value = ''; // Clear any previous error messages
+  } catch (error) {
+    errorMessage.value = error.message; // Display the error message from backend
+  }
 };
 
 const changeEmail = async () => {
-  await fetch('http://localhost:3000/api/change-email', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: `email=${newEmail.value}`,
-  });
+  try {
+    const response = await fetch(`http://localhost:3000/api/user/${userId.value}/change-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: newEmail.value }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText);
+    }
+
+    alert('Email updated successfully');
+    errorMessage.value = ''; // bersihin error message sebelumnya
+  } catch (error) {
+    errorMessage.value = error.message; // nampilin error message dari backend
+  }
 };
 </script>
 
@@ -29,8 +51,11 @@ const changeEmail = async () => {
       <input v-model="userId" placeholder="Enter User ID" />
       <button @click="getUser">Get User Info</button>
     </div>
+    <div v-if="errorMessage" class="error-message">
+      <p>{{ errorMessage }}</p>
+    </div>
     <div v-if="users">
-      <template v-for="user in users">
+      <template v-for="user in users" :key="user.id">
         <h2>{{ user.name }}</h2>
         <p>Email: {{ user.email }}</p>
         <hr />
@@ -44,3 +69,10 @@ const changeEmail = async () => {
     </form>
   </div>
 </template>
+
+<style>
+.error-message {
+  color: red;
+  font-weight: bold;
+}
+</style>
