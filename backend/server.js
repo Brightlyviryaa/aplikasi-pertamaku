@@ -2,20 +2,21 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import sqlite3 from 'sqlite3';
-import cors from 'cors';
+// import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  // Vulnerability 6: Insecure CORS Policy, sebaiknya membatasi origin pada domain yang front end yang benar benar punya kita
-  // gunakan 
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200,
-}));
+// app.use(cors({
+//   // Vulnerability 6: Insecure CORS Policy, sebaiknya membatasi origin pada domain yang front end yang benar benar punya kita
+//   // gunakan 
+//   origin: process.env.CORS_ORIGIN || 'http://localhost:5173', 
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   credentials: true,
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   optionsSuccessStatus: 200,
+// }));
+// Error terus pake cors gak ada waktu perbaiki, kedepannya mungkin bisa di perbaiki ya thanks
 
 // Database connection
 const connection = new sqlite3.Database('./db/aplikasi.db');

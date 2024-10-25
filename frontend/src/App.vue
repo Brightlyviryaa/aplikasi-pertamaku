@@ -7,9 +7,11 @@ const users = ref(null);
 const newEmail = ref('');
 const errorMessage = ref('');
 
+const backendUrl = process.env.VUE_APP_BACKEND_URL; // Ambil URL dari variabel lingkungan
+
 const getUser = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/api/user/${userId.value}`);
+    const response = await fetch(`${backendUrl}/api/user/${userId.value}`); // Gunakan backendUrl
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(errorText);
@@ -23,7 +25,7 @@ const getUser = async () => {
 
 const changeEmail = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/api/user/${userId.value}/change-email`, {
+    const response = await fetch(`${backendUrl}/api/user/${userId.value}/change-email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,6 +45,7 @@ const changeEmail = async () => {
   }
 };
 </script>
+
 
 <template>
   <div id="app">
